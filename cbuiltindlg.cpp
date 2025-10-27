@@ -1,5 +1,9 @@
 #include "cbuiltindlg.h"
 #include <QtWidgets>
+#include <QtPrintSupport/qprinter.h>
+#include <QtPrintSupport/qpagesetupdialog.h>
+#include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrintPreviewDialog>
 
 cbuiltindlg::cbuiltindlg(QWidget *parent)
     : QDialog(parent)
@@ -32,11 +36,30 @@ cbuiltindlg::cbuiltindlg(QWidget *parent)
     resize(400,300);
     connect(colorPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
     connect(filePushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
-    connect(testPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(fontPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(inputPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(pagePushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(progressPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(printPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(displayTextEdit,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(testPushBth,SIGNAL(clicked()),this,SLOT(dotextcolor()));
+
 }
-cbuiltindlg::~cbuiltindlg()
+cbuiltindlg::~cbuiltindlg(){}
+
+void cbuiltindlg :: dotextcolor()
 {
+    QPushButton* bth = qobject_cast<QPushButton*>(sender());
+    if(bth == testPushBth)
+    {
+        QPalette palette=displayTextEdit->palette();
+        const QColor& color=
+            QColorDialog::getColor(palette.color (QPalette:: ToolTipBase),this, tr("設定前景顏色"));
+        if (color.isValid())
+            palette.setColor(QPalette:: Text, color); displayTextEdit->setPalette (palette);
+    }
 }
+
 void cbuiltindlg :: doPushBth()
 {
     QPushButton* bth = qobject_cast<QPushButton*>(sender());
@@ -49,15 +72,7 @@ void cbuiltindlg :: doPushBth()
         if (color.isValid())
             palette.setColor(QPalette:: Base, color); displayTextEdit->setPalette (palette);
     }
-    if(bth == testPushBth)
-    {
-        //qDebug()<< "hello";
-        QPalette palette=displayTextEdit->palette();
-        const QColor& color=
-            QColorDialog::getColor(palette.color (QPalette:: ToolTipBase),this, tr("設定前景顏色"));
-        if (color.isValid())
-            palette.setColor(QPalette:: Text, color); displayTextEdit->setPalette (palette);
-    }
+
     if(bth == filePushBth)
     {
         QString fileName = QFileDialog::getOpenFileName(this,tr("開啟檔案"),".",
@@ -66,20 +81,56 @@ void cbuiltindlg :: doPushBth()
                                                            ";;XML檔(*.xml)"));
     displayTextEdit->setText(fileName);
     }
-    if(bth == progressPushBth)
+
+
+    if (bth == fontPushBth)
+    {   bool o;
+        const QFont& font = QFontDialog::getFont(& o ,
+                                             displayTextEdit->font(),
+                                           this,
+                                           tr("字體對話盒"));
+    if (o) displayTextEdit->setFont(font);
+    }
+    if (bth == inputPushBth){
+        bool ok;
+    QString text = QInputDialog::getText(this,
+                                         QStringLiteral("輸入對話盒"),
+                                         QStringLiteral("輸入文字"),
+                                         QLineEdit:: Normal,
+                                         QDir::home().dirName(), &ok
+                                         );
+    if (ok && !text.isEmpty()) displayTextEdit->setText(text);
+    }
+    if (bth == pagePushBth){
+        QPrinter printer (QPrinter:: HighResolution);
+        QPageSetupDialog *dlg = new QPageSetupDialog (&printer, this);
+        dlg->setWindowTitle (tr("頁面設定話方塊"));
+        if (dlg->exec()== QDialog:: Accepted)
+        {
+
+        }
+    }
+    if (bth == progressPushBth){
+
+        QProgressDialog progress (QStringLiteral("正在複製檔案..."),
+                                 QStringLiteral("取消"),0,10000,this);
+        progress.setWindowTitle (QStringLiteral("進度對話方塊"));
+        progress.show();
+        for (int i = 0 ; i < 10000 ; i++){
+            progress.setValue(i);
+        qApp->processEvents();
+        if (progress.wasCanceled())
+            break;
+        qDebug() << i;
+    }
+    progress.setValue (10000);
+    }
+    if (bth == printPushBth)
     {
-    QProgressDialog progress (tr("止在複製檔案...)"),
-                              tr("取消"), 0, 10000,this);
-                              progress.setWindowTitle (tr("進度對話盒"));
-    progress.show();
-    for (int i=0;i<10000; i++){
-        progress.setValue(i);
-        _sleep(10000);
-        qDebug()<< i;
+        QPrinter printer (QPrinter:: HighResolution);
+        QPrintDialog dialog(&printer, this);
+        if (dialog.exec() != QDialog:: Accepted)
+            return;
     }
-    }
-
-
-
-
 }
+

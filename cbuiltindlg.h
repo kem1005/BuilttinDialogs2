@@ -31,5 +31,6 @@ private:
     QPushButton  *testPushBth;
 private slots:
     void doPushBth();
+    void dotextcolor();
 };
 #endif // CBUILTINDLG_H
