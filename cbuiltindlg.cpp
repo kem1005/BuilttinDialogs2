@@ -64,6 +64,22 @@ void cbuiltindlg :: doPushBth()
                                                         tr("任何檔案(*.*)"
                                                            ";;文字檔(*.txt)"
                                                            ";;XML檔(*.xml)"));
+    displayTextEdit->setText(fileName);
     }
-}
+    if(bth == progressPushBth)
+    {
+    QProgressDialog progress (tr("止在複製檔案...)"),
+                              tr("取消"), 0, 10000,this);
+                              progress.setWindowTitle (tr("進度對話盒"));
+    progress.show();
+    for (int i=0;i<10000; i++){
+        progress.setValue(i);
+        _sleep(10000);
+        qDebug()<< i;
+    }
+    }
 
+
+
+
+}
