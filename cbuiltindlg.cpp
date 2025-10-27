@@ -32,6 +32,7 @@ cbuiltindlg::cbuiltindlg(QWidget *parent)
     resize(400,300);
     connect(colorPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
     connect(filePushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(testPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
 }
 cbuiltindlg::~cbuiltindlg()
 {
@@ -47,6 +48,15 @@ void cbuiltindlg :: doPushBth()
         QColorDialog::getColor(palette.color (QPalette:: Base),this, tr("設定背景顏色"));
         if (color.isValid())
             palette.setColor(QPalette:: Base, color); displayTextEdit->setPalette (palette);
+    }
+    if(bth == testPushBth)
+    {
+        //qDebug()<< "hello";
+        QPalette palette=displayTextEdit->palette();
+        const QColor& color=
+            QColorDialog::getColor(palette.color (QPalette:: ToolTipBase),this, tr("設定前景顏色"));
+        if (color.isValid())
+            palette.setColor(QPalette:: Text, color); displayTextEdit->setPalette (palette);
     }
     if(bth == filePushBth)
     {
