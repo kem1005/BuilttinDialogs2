@@ -36,6 +36,7 @@ cbuiltindlg::cbuiltindlg(QWidget *parent)
     resize(400,300);
     connect(colorPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
     connect(filePushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
+    connect(errorPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
     connect(fontPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
     connect(inputPushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
     connect(pagePushBth,SIGNAL(clicked()),this,SLOT(doPushBth()));
@@ -71,6 +72,18 @@ void cbuiltindlg :: doPushBth()
         QColorDialog::getColor(palette.color (QPalette:: Base),this, tr("設定背景顏色"));
         if (color.isValid())
             palette.setColor(QPalette:: Base, color); displayTextEdit->setPalette (palette);
+    }
+
+    if (bth == errorPushBth)
+    {
+        QErrorMessage box(this);
+        box.setWindowTitle (QStringLiteral("錯誤訊息盒"));
+        box.showMessage (QStringLiteral("錯誤訊息盒實例xx。"));
+        box.exec();
+        box.showMessage (QStringLiteral("錯誤訊息盒實例yy。"));
+        box.exec();
+        box.showMessage (QStringLiteral("錯誤訊息盒實例zz:"));
+        box.exec();
     }
 
     if(bth == filePushBth)
